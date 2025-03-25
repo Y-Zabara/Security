@@ -1,105 +1,125 @@
-# ------------ КЛАСИЧНИЙ шифроалгоритм з кодом Цезаря англомовного транскрипту
-
 import time
 
-# ------------ Функція шифрування / дешифрування кодом Цезаря англомовного транскрипту
-def CryptDcrypt (message, key, mode):
 
-    '''
+def timing_decorator(func):
+    """
+    A decorator that measures and returns the execution time of a function.
 
-    шифр Цезаря - класичний шифр заміни літерала вхідного тексту на літерал із словника з позицією ключа
+    Args:
+        func (callable): The function to be decorated.
 
-    :param message: текст що підлягає перетворенню -  шифрування / дешифрування
-    :param key: ключ шифрування
-    :param mode: напрям перетворення - шифрування / дешифрування вхідного тексту
-    :return: перетворений текст - шифрування / дешифрування
-
-    '''
-
-
-    symbols='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890 !&.'
-
-    global outtranslated
-    translated=''
-    for symbol in message:
-        if symbol in symbols:
-            symbolindex = symbols.find(symbol)
-            if mode=='encrypt':
-                translatedindex=symbolindex+key
-            elif mode == 'decrypt':                           # Альтернатива
-                 translatedindex = symbolindex - key
-            if translatedindex >=len(symbols):                # Контроль загортання
-                 translatedindex=translatedindex-len(symbols)
-            elif translatedindex <0:                           # Альтернатива
-                translatedindex = translatedindex + len(symbols)
-            translated=translated+symbols[translatedindex]
-        else:
-            translated = translated + symbol
-    print("--------------------------------------------------------------")
-    print(mode,'=',translated)
-
-    return translated
+    Returns:
+        callable: The wrapped function that returns a tuple (execution_time, result).
+    """
+    def wrapper(*args, **kwargs):
+        start_time = time.perf_counter()  # Start measuring time
+        result = func(*args, **kwargs)
+        end_time = time.perf_counter()  # End measuring time
+        execution_time = end_time - start_time
+        return execution_time, result
+    return wrapper
 
 
-# ----- Дослідження стійкості криптоалгоритму Цезаря методом перебору ключа ----
-def HacCrypt (message):
-    '''
+class CaesarCipher:
+    """
+    A class implementing the Caesar cipher for encryption and decryption.
 
-    Злам шифру методом перебору ключа ("грубої сили") - алфавіт має бути відомий
+    Attributes:
+        alphabet (str): The alphabet used for shifting characters.
+        key (int): The shift value for encryption and decryption.
+    """
 
-    :param message: текст що підлягає зламу
-    :return: нічого
+    def __init__(self, alphabet: str, key: int) -> None:
+        """
+        Initializes the CaesarCipher with a given alphabet and key.
 
-    '''
+        Args:
+            alphabet (str): The alphabet to be used for shifting.
+            key (int): The shift value.
+        """
+        self.alphabet: str = alphabet
+        self.key: int = key
 
+    def encrypt(self, message: str) -> str:
+        """
+        Encrypts a message using the Caesar cipher.
 
-    symbols='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890 !&.'
+        Args:
+            message (str): The plaintext message to encrypt.
 
-    for key in range(len(symbols)):
-        translated = ''
+        Returns:
+            str: The encrypted message.
+        """
+        result = ""
         for symbol in message:
-            if symbol in symbols:
-                symbolindex = symbols.find(symbol)
-                translatedindex = symbolindex - key
-                if translatedindex <0:
-                    translatedindex = translatedindex + len(symbols)
-                translated = translated + symbols[translatedindex]
+            if symbol in self.alphabet:
+                symbol_index = self.alphabet.find(symbol)
+                translated_index = (symbol_index + self.key) % len(self.alphabet)
+                result += self.alphabet[translated_index]
             else:
-                translated = translated + symbol
-        print('key=', key, ' ', translated)
+                result += symbol  # Preserve characters that are not in the alphabet
+        return result
 
-    return
+    def decrypt(self, message: str) -> str:
+        """
+        Decrypts a message encrypted with the Caesar cipher.
+
+        Args:
+            message (str): The encrypted message.
+
+        Returns:
+            str: The decrypted message.
+        """
+        result = ""
+        for symbol in message:
+            if symbol in self.alphabet:
+                symbol_index = self.alphabet.find(symbol)
+                translated_index = (symbol_index - self.key) % len(self.alphabet)
+                result += self.alphabet[translated_index]
+            else:
+                result += symbol  # Preserve characters that are not in the alphabet
+        return result
+
+    @timing_decorator
+    def hacker_crypt(self, message: str) -> str:
+        """
+        Attempts to brute-force decrypt a message by trying all possible keys.
+
+        Args:
+            message (str): The encrypted message.
+
+        Returns:
+            str: The possible decryption results with different keys.
+        """
+        result = ""
+        original_key = self.key
+        for key in range(len(self.alphabet)):
+            self.key = key
+            translated = self.decrypt(message)
+            result += f"Key {key}: {translated}\n"
+        self.key = original_key
+        return result
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
+    # Define the alphabet and create an instance of CaesarCipher
+    alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+    cipher = CaesarCipher(alphabet, 3)
 
-    key = 13
+    # Original message
+    text = "Hello, World!"
+    
+    # Encrypt and decrypt the message
+    encrypted = cipher.encrypt(text)
+    decrypted = cipher.decrypt(encrypted)
 
+    # Print results
+    print(f"Original: {text}")
+    print(f"Encrypted: {encrypted}")
+    print(f"Decrypted: {decrypted}")
 
-    imputFilename = 'test_file.txt'
-    ouputFilename = 'crypt_test_file.txt'
-    fileObj = open(imputFilename)
-    content = fileObj.read()
-    fileObj.close()
-
-    print("--------------------------------------------------------------")
-    print('input =', content)
-
-    #  ----------------- Шифрування - криптографія ----------------------
-    StartTime = time.time()
-    outtranslated= CryptDcrypt(content, key, 'encrypt')  # Кодування
-    CryptDcrypt (outtranslated, key, 'decrypt')          # Декодування
-    totalTime = (time.time() - StartTime)
-    print('totalTime =', totalTime, 's')
-
-    outputfileObj = open(ouputFilename, 'w')
-    outputfileObj.write(outtranslated)  # Запис інформації у файл
-    outputfileObj.close()
-
-    # ----- Дослідження стійкості алгоритму через злам - криптологія -----
-    print ('-------------- Злам шифру методом перебору ("грубої сили") -----------------')
-    StartTime=time.time()
-    HacCrypt (outtranslated)
-    totalTime = (time.time()-StartTime)
-    print('totalTime =', totalTime, 's')
+    # Attempt to brute-force decrypt the message and measure execution time
+    execution_time, hacker_result = cipher.hacker_crypt(encrypted)
+    print(f"Hacker attempt (brute force):\n{hacker_result}")
+    print(f"Execution time: {execution_time:.6f} seconds")
 
