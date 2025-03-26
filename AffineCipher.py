@@ -41,8 +41,11 @@ class AffineCipher:
         old_keys = self.keys_storage.keys
         for key in range(2, len(self.alphabet)):
             self.keys_storage.keys = (key, key)
-            plaintext = self.decrypt(message)
-            result += f" key: {str((key,key))} {plaintext}\n"
+            try:
+                plaintext = self.decrypt(message)
+                result += f" key: {str((key,key))} {plaintext}\n"
+            except Exception:
+                continue
         self.keys_storage.keys = old_keys
         return result
 

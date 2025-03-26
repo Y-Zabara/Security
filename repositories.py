@@ -9,3 +9,7 @@ class RegularFileRepo:
     def save_bytes(self, bytes: bytes) -> None:
         with open(self.filename, "wb") as content_file:
             return content_file.write(bytes)
+
+    def get_n_chars(self, n) -> str:
+        text = self.get_text()
+        return text[:n]

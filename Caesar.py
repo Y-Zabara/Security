@@ -81,7 +81,7 @@ class CaesarCipher:
         return result
 
     @timing_decorator
-    def hacker_crypt(self, message: str) -> str:
+    def brute_force_decrypt(self, message: str) -> str:
         """
         Attempts to brute-force decrypt a message by trying all possible keys.
 
