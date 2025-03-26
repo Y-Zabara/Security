@@ -6,8 +6,9 @@ authors = [
     {name = "Yaroslav",email = "zabaraaroslav@gmail.com"}
 ]
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.13,<4"
 dependencies = [
+    "rsa (>=4.9,<5.0)"
 ]
 
 
