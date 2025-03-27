@@ -1,5 +1,5 @@
 import pytest
-from Caesar import CaesarCipher  # Замініть `your_module` на ім'я файлу з класом
+from Cipher.Caesar import CaesarCipher  
 
 @pytest.mark.parametrize("alphabet, key, plain, encrypted", [
     # Латиниця (англійський алфавіт)

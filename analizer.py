@@ -1,6 +1,6 @@
 import time
 from repositories import RegularFileRepo
-from Caesar import CaesarCipher
+from Cipher.Caesar import CaesarCipher
 from alphabets import ENGLISH_ALPHABET
 
 def encrypt_time(Cipher, message: str):
@@ -40,4 +40,4 @@ if __name__ == "__main__":
     brute_force_decrypt_time(cipher, file.get_n_chars(n)),
     decrypt_time(cipher, file.get_n_chars(n))}""")
 
-    print(analize(cipher, (50, 2000, 400)))
+    print(analize(cipher, (50, 1000000, 100000)))

@@ -103,5 +103,5 @@ pyasn1 = ">=0.1.3"
 
 [metadata]
 lock-version = "2.1"
-python-versions = ">=3.13,<4"
-content-hash = "a88cccd0fea813a19ac72b76101ea5563c29cac5429951a46f3a106eb3b879f6"
+python-versions = ">=3.12,<4"
+content-hash = "d5b78fdbc1b7cfbf0fee7789dfc707335df35a1e953857897c47dabe13e315ed"
