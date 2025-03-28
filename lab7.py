@@ -41,17 +41,21 @@ def decrypt_text(keyfile, message=None, file=None):
         try:
             with open(file, "r") as f:
                 message = f.read().strip()
+            ciphertext = bytes.fromhex(message)
         except FileNotFoundError:
             print(f"Error: The file {file} does not exist.")
             return
     elif message:
         ciphertext = bytes.fromhex(message)
-        try:
-            plaintext = decrypt(ciphertext, private_key).decode()
-            print(plaintext)
-        except Exception as e:
-            print(f"Error during decryption: {str(e)}")
-    else: print("Message don`t be void")
+    else:
+        print("Message cannot be empty")
+        return
+
+    try:
+        plaintext = decrypt(ciphertext, private_key).decode()
+        print(plaintext)
+    except Exception as e:
+        print(f"Error during decryption: {str(e)}")
 
 
 # Основна функція для обробки команд
